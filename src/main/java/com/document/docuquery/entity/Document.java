@@ -15,7 +15,6 @@ public class Document {
     private String title;
     private String author;
     private String type;
-
     @CreationTimestamp
     private LocalDateTime uploadDate;
     @Column(columnDefinition = "tsvector", insertable = false, updatable = false)

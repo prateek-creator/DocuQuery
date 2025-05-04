@@ -3,6 +3,7 @@ package com.document.docuquery.repository;
 import com.document.docuquery.dto.QaResponse;
 import com.document.docuquery.entity.Document;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DocumentRepository extends JpaRepository<Document,Long> {
+public interface DocumentRepository extends JpaRepository<Document,Long>, JpaSpecificationExecutor<Document> {
     // v1 - Basic ILIKE search
     @Query("SELECT new com.document.docuquery.dto.QaResponse(d.id, d.title, d.author, d.content) " +
             "FROM Document d WHERE LOWER(d.content) LIKE LOWER(CONCAT('%', :query, '%'))")
