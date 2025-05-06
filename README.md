@@ -12,6 +12,7 @@ DocuQuery is a Spring Boot-based backend system that enables document ingestion 
 - 📈 Swagger UI for interactive API testing
 -  **JUnit 5**: For unit testing
 - **Mockito**: For mocking services during unit testing
+- ⛓️ **JWT Authentication with Role-based Access Control**
 
 ---
 
@@ -24,6 +25,7 @@ DocuQuery is a Spring Boot-based backend system that enables document ingestion 
 | Database   | PostgreSQL                        |
 | File Parser| Apache Tika                       |
 | Docs UI    | Springdoc OpenAPI (v2.x) + Swagger|
+| Auth       | JWT (JSON Web Token)              |
 | Build Tool | Maven                             |
 | Utilities  | Lombok                            |
 
@@ -33,7 +35,7 @@ DocuQuery is a Spring Boot-based backend system that enables document ingestion 
 
 ### 📄 Upload Document
 
-**POST** `/api/documents/upload`
+**POST** `/api/documents/upload` (Requires `ADMIN` role)
 
 **Request**: `MultipartFile` file
 
@@ -53,7 +55,7 @@ DocuQuery is a Spring Boot-based backend system that enables document ingestion 
 
 ### 🔍 Search v1 (Basic)
 
-**GET** `/api/documents/v1/qa?query=your+query`
+**GET** `/api/documents/v1/qa?query=your+query` (Requires `VIEWER` role)
 
 **Response**:
 ```json
@@ -71,7 +73,7 @@ DocuQuery is a Spring Boot-based backend system that enables document ingestion 
 
 ### 🔎 Search v2 (Enhanced)
 
-**GET** `/api/documents/v2/qa?query=your+query`
+**GET** `/api/documents/v2/qa?query=your+query` (Public Access)
 
 **Response**: Same as v1.
 
@@ -79,7 +81,7 @@ DocuQuery is a Spring Boot-based backend system that enables document ingestion 
 
 ### 📆 Filter Documents
 
-**GET** `/api/documents/filter`
+**GET** `/api/documents/filter` (Requires `EDITOR` role)
 
 **Query Parameters:**
 
@@ -111,30 +113,37 @@ DocuQuery is a Spring Boot-based backend system that enables document ingestion 
 
 ---
 
-## 🗋 Data Models
+## 🗓️ Authentication & Authorization (JWT)
 
-### 📄 Document Entity
+### Login
+**POST** `/api/auth/login`
 
-| Field        | Type       | Description            |
-|--------------|------------|------------------------|
-| `id`         | Long       | Unique ID              |
-| `title`      | String     | Document title         |
-| `author`     | String     | Author of document     |
-| `content`    | String     | Extracted text         |
-| `type`       | String     | File extension         |
-| `uploadDate` | LocalDate  | Date uploaded          |
-
-### 📜 QaResponse DTO
-
-Used in search APIs:
+**Request:**
 ```json
 {
-  "id": 1,
-  "title": "Document Title",
-  "author": "Author",
-  "content": "Relevant text..."
+  "username": "admin",
+  "password": "admin123"
 }
 ```
+
+**Response:**
+```json
+{
+  "token": "<JWT_TOKEN>",
+  "userName":"<name>",
+  "role":"[<role>]"
+}
+```
+
+### Role-Based Access
+| Endpoint                       | Required Role |
+|--------------------------------|---------------|
+| `/api/documents/upload`       | `ROLE_ADMIN`  |
+| `/api/documents/filter`       | `ROLE_EDITOR` |
+| `/api/documents/v1/qa`        | `ROLE_VIEWER` |
+| `/api/documents/v2/qa`        | Public        |
+
+**Note:** Roles are stored in DB with prefix `ROLE_`, but matched as `hasRole("ADMIN")`, etc.
 
 ---
 
@@ -182,7 +191,4 @@ mvn clean install
 mvn spring-boot:run
 ```
 
-
 ---
-
-
