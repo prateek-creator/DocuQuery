@@ -6,6 +6,8 @@ import com.document.docuquery.repository.DocumentRepository;
 import com.document.docuquery.specification.DocumentSpecification;
 import org.apache.tika.Tika;
 import org.apache.tika.exception.TikaException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,12 +29,14 @@ public class DocumentService {
         this.documentRepository = documentRepository;
     }
 
+    @CacheEvict(value = "qaSearchCache", allEntries = true)
     public Document saveDocument(MultipartFile file) throws IOException, TikaException {
         String text=new Tika().parseToString(file.getInputStream());
         Document doc=Document.builder().title(file.getOriginalFilename()).type(file.getContentType())
                 .author("prateek").content(text).build();
         return documentRepository.save(doc);
     }
+    @Cacheable(value = "qaSearchCache", key="#query")
     public List<QaResponse> searchV1(String query) {
         return documentRepository.searchByContentIlike(query);
     }
