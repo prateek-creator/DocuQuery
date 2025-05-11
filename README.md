@@ -7,12 +7,20 @@ DocuQuery is a Spring Boot-based backend system that enables document ingestion 
 ## 🚀 Features
 
 - 📅 Upload and extract document content (PDF, Word)
+
 - 🔎 Basic and enhanced keyword-based question answering
+
 - 🧠 Metadata filtering with pagination & sorting
+
 - 📈 Swagger UI for interactive API testing
--  **JUnit 5**: For unit testing
-- **Mockito**: For mocking services during unit testing
-- ⛓️ **JWT Authentication with Role-based Access Control**
+
+- 🧪 JUnit 5: For unit testing
+
+- 🦹‍♂️ Mockito: For mocking services during unit testing
+
+- ⛓️ JWT Authentication with Role-based Access Control
+
+- ⚡ Caching: Redis caching integrated for query results, improving performance
 
 ---
 
